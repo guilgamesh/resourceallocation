@@ -1,0 +1,49 @@
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+#treeMap {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+#dash-header {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1%;
+}
+
+* {
+    border: 1px solid red;
+}
+
+.main-svg, .plot-container {
+    width: 100%;
+}
+
+.dimension-control > select, label {
+    margin-top: 10px;
+}
+
+.dimension-control > select {
+    width: 30%;
+}
+
+.dimension-control > label {
+    display: inline-block;
+    background-color: yellow;
+    width: 15%;
+}
+
+#active-dimensions {
+    display: inline-block;
+    width: 40%;
+    min-height: 5%;
+}
+
+#dimensions-list {
+    display: inline-block;
+    width: 20%;
+}
