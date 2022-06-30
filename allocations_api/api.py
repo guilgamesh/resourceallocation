@@ -3,7 +3,7 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource, Api
 from flask_cors import CORS
 import pandas as pd
-import Organization from 
+from ad_team import Organization
 
 app = Flask(__name__)
 CORS(app)
@@ -14,11 +14,13 @@ class Allocations(Resource):
     alloc_summary = None
 
     alloc_summary_loaded = False
-        
+            
     def get(self):
         if not Allocations.alloc_summary_loaded:
             Allocations.alloc_summary = self.load_summary_table();
             Allocations.alloc_summary_loaded = True
+            Organization.open_sessions()
+            self.org = Organization('CN=Sukumar Bhasker,OU=Users,OU=GSS,OU=IN,DC=asia,DC=ad,DC=flextronics,DC=com')
             
         return Allocations.alloc_summary.to_json()
     
@@ -36,7 +38,10 @@ class Allocations(Resource):
             "Resource Name", 
             "Actual FTE"
         ]]
-
+        
+        alloc_detail["L1 Organization"] = alloc_detail["Resource Name"].apply(lambda name : self.org.owning_org(name, 1))
+        alloc_detail["L2 Organization"] = alloc_detail["Resource Name"].apply(lambda name : self.org.owning_org(name, 2))
+        
         alloc_detail = alloc_detail[alloc_detail["Actual FTE"] > 0]
 
         alloc_detail.rename(columns={
@@ -48,12 +53,19 @@ class Allocations(Resource):
             "Actual FTE": "Allocation"
         }, inplace=True)
 
-        alloc_summary = alloc_detail.groupby(["Lead", "Application", "Business Segment", "Project", "Resource"]).sum()
+        alloc_summary = alloc_detail.groupby([
+            "Lead", 
+            "Application", 
+            "Business Segment", 
+            "Project", 
+            "Resource",
+            "L1 Organization",
+            "L2 Organization"
+        ]).sum()
         alloc_summary = alloc_summary.reset_index()
         alloc_summary["Allocation"] = alloc_summary["Allocation"].apply(lambda x: int(x*100) / 100) 
         
         return alloc_summary      
-
 
 ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][0]
 if ENVIRONMENT == "PRODUCTION":
