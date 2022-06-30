@@ -84,7 +84,7 @@ class TreeMapControl {
 
     #selectControl(dimensionName) {
         let select = document.createElement("select");
-        select.id = `${dimensionName}-select`;
+        select.id = `${dimensionName.replaceAll(' ', '_')}-select`;
         select.className = 'member-select';
         select.multiple = true;
 
@@ -104,6 +104,16 @@ class TreeMapControl {
         div.id = "dimensions-pool";
         div.ondrop = this.#onDimensionPoolDrop.bind(this);
 
+        let label = document.createElement("p");
+        label.id = "dimensions-pool-title";
+        label.innerHTML = "Available Dimensions";
+        div.appendChild(label);
+
+        let list = document.createElement("div");
+        list.id = "dimensions-pool-list";
+        div.appendChild(list);
+
+
         for(let dimension of this.#dimensionsPool) {
             let p = document.createElement("p");
             p.draggable = true;
@@ -113,7 +123,7 @@ class TreeMapControl {
             p.ondragstart   = this.#onDimensionDragStart    .bind(this);
             p.ondragover    = this.#onDimensionDragOver     .bind(this);;
     
-            div.appendChild(p);
+            list.appendChild(p);
         }
 
         return div;
@@ -157,7 +167,7 @@ class TreeMapControl {
 
         let filter = {};
         for(let select of selects) {
-            let dimensionName = select.id.match(/(\w+)-\w+/)[1]            
+            let dimensionName = select.id.match(/(.*)-select/)[1].replaceAll('_', ' ');            
             let members = [];
             let options = Array.from(select.options).filter(o => o.selected);
             for(let option of options) {
@@ -185,7 +195,6 @@ class TreeMapControl {
     #filteredTable() {
         let filter = this.#activeFilter();
         let count = this.#rowCount;
-        let dimensions = this.dimensions;
         let columns = Object.keys(this.#table);
 
         let filteredTable = {};

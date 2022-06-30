@@ -3,14 +3,14 @@ import { TreeMapChart }     from '../js/TreeMapChart.js';
 import { TableMetadata }   from './TableMetadata.js';
 import { TreeMapControl }   from './TreeMapControl.js';
 
-const ALLOCATIONS_URL = "http://127.0.0.1:5000/allocations";
 
-let allocationData = {};
+let ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][0];
+let ALLOCATIONS_URL = (ENVIRONMENT == "PRODUCTION" ? "http://10.18.74.109:5000/allocations"
+                                : "http://127.0.0.1:5000/allocations");
 
 window.onload = () => {
     fetch(ALLOCATIONS_URL)
     .then(response => response.json())
-//    .then(data => loadChart(JSON.parse(data)))
     .then(data => renderTreeMapControl(JSON.parse(data)))
 };
 

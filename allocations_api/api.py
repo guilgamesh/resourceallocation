@@ -3,6 +3,7 @@ from flask import Flask
 from flask_restful import reqparse, abort, Resource, Api
 from flask_cors import CORS
 import pandas as pd
+import Organization from 
 
 app = Flask(__name__)
 CORS(app)
@@ -23,54 +24,43 @@ class Allocations(Resource):
     
     def load_summary_table(self):
         
-        file_name = "C:/SourceCode/ResourceAllocation/data/resource_allocation/GSD Portfolio Consolidated Actuals  Forecast Data.xlsx";
-        df = pd.read_excel(file_name, "Raw data ")
+        #file_name = "C:/SourceCode/ResourceAllocation/data/resource_allocation/GSD Portfolio Consolidated Actuals  Forecast Data.xlsx";
+        file_name = "C:/SourceCode/ResourceAllocation/data/resource_allocation/GSD Portfolio Consolidated Actuals  Forecast Data May 22.xlsx";
+        df = pd.read_excel(file_name, "Consolidated file ")
 
         alloc_detail = df [[
-            "Lead",
-            "Project Name ",
-            "Application-ii",
+            "Leads",
+            "Project ",
+            "Updated App name",
             "Business Segment",
             "Resource Name", 
-            "Actual time Apr"
+            "Actual FTE"
         ]]
 
-        alloc_detail = alloc_detail[alloc_detail["Actual time Apr"] > 0]
+        alloc_detail = alloc_detail[alloc_detail["Actual FTE"] > 0]
 
         alloc_detail.rename(columns={
-            "Project Name " : "Project",
-            "Application-ii" : "Application",
+            "Leads" : "Lead",
+            "Project " : "Project",
+            "Updated App name" : "Application",
             "Business Segment": "Business Segment",
             "Resource Name": "Resource",
-            "Actual time Apr": "Allocation"
+            "Actual FTE": "Allocation"
         }, inplace=True)
 
-        alloc_summary = alloc_detail.groupby(["Lead", "Application", "Project", "Resource"]).sum()
+        alloc_summary = alloc_detail.groupby(["Lead", "Application", "Business Segment", "Project", "Resource"]).sum()
         alloc_summary = alloc_summary.reset_index()
         alloc_summary["Allocation"] = alloc_summary["Allocation"].apply(lambda x: int(x*100) / 100) 
         
         return alloc_summary      
-        
-        '''
-        parser = reqparse.RequestParser()  # initialize
-        
-        parser.add_argument('userId', required=True)  # add args
-        parser.add_argument('name', required=True)
-        parser.add_argument('city', required=True)
-        
-        args = parser.parse_args()  # parse arguments to dictionary
-        
-        # create new dataframe containing new values
-        new_data = pd.DataFrame({
-            'userId': args['userId'],
-            'name': args['name'],
-            'city': args['city'],
-            'locations': [[]]
-        })        
-        '''
-        #return {'result':f'The id provides is "{id}"'}
+
+
+ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][0]
+if ENVIRONMENT == "PRODUCTION":
+    host = "10.18.74.109"
+else:
+    host = "127.0.0.1"    
 
 api.add_resource(Allocations, '/allocations')
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host=host)
