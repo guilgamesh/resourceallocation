@@ -2,6 +2,17 @@
     "python.condaPath":"C:/ProgramData/Miniconda3",
     "version": "0.2.0",
     "configurations": [
+    {
+        "name": "PV Database",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/pvdatabase/bin/Debug/net6.0/pvdatabase.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+    },
         {
             "name": "Python: Current File",
             "type": "python",

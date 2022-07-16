@@ -1,11 +1,9 @@
-import { TreeData }         from '../js/TreeData.js';
-import { TreeMapChart }     from '../js/TreeMapChart.js';
-import { TableMetadata }   from './TableMetadata.js';
-import { TreeMapControl }   from './TreeMapControl.js';
+import { TreeData }         from '../js/allocations/TreeData.js';
+import { TreeMapChart }     from '../js/allocations/TreeMapChart.js';
+import { TreeMapControl }   from '../js/allocations/TreeMapControl.js';
 
-
-let ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][0];
-let ALLOCATIONS_URL = (ENVIRONMENT == "PRODUCTION" ? "http://10.18.64.3:5000/allocations"
+let ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][1];
+let ALLOCATIONS_URL = (ENVIRONMENT == "PRODUCTION" ? "http://172.24.112.1:5000/allocations"
                                 : "http://127.0.0.1:5000/allocations");
 
 window.onload = () => {

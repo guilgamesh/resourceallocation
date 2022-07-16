@@ -62,6 +62,9 @@ class Allocations(Resource):
             "Actual FTE": "Allocation"
         }, inplace=True)
 
+        save_file_name = "C:/SourceCode/ResourceAllocation/data/resource_allocation/GSD Portfolio May 22 Detail.xlsx";
+        alloc_detail.to_excel(save_file_name)
+
         alloc_summary = alloc_detail.groupby([
             "Lead", 
             "Application", 
@@ -88,7 +91,7 @@ def host_ip():
         
     return ip
 
-ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][0]
+ENVIRONMENT = ["PRODUCTION", "DEVELOPMENT"][1]
 LOCAL_HOST = "127.0.0.1"
 
 if ENVIRONMENT == "PRODUCTION":
